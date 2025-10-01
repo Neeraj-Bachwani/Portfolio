@@ -45,6 +45,7 @@
   color: var(--gainsboro);
   font-weight: 400;
   margin: 0;
+  padding-left:1rem;
 }
 
 .top-img {
