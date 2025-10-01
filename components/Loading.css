@@ -1,4 +1,10 @@
-/* Fullscreen Green Background */
+.mobile-only {
+  display: none;
+}
+.desktop-only {
+  display: block;
+}
+
 .loading-container {
   background-color: var(--purpie);
   height: 100vh;
@@ -11,12 +17,12 @@
   overflow: hidden;
 }
 
-/* Top Bar - Now Slower & Laggy */
+/* Top Bar */
 .top-bar {
   position: absolute;
   top: 0;
   left: 0;
-  height: 120px;
+  height: 7.5rem; 
   background-color: var(--black);
   z-index: 1;
 }
@@ -25,30 +31,29 @@
 .top-content {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
   align-items: center;
-  padding: 20px;
+  padding: 1.25rem;
   position: relative;
   z-index: 2;
 }
 
 .title {
   font-family: "Roobert", sans-serif;
-  font-size: 30px;
+  font-size: 1.875rem; 
   text-transform: uppercase;
   color: var(--gainsboro);
-  position: absolute;
-  left: 30px;
   font-weight: 400;
+  margin: 0;
 }
 
 .top-img {
   flex: 1;
-  text-align: center;
+  text-align: center; 
 }
 
 .top-img img {
-  width: 70px;
+  width: 4.375rem; 
   height: auto;
   object-fit: cover;
 }
@@ -57,62 +62,60 @@
   font-family: "Roobert", sans-serif;
   text-transform: uppercase;
   color: var(--gainsboro);
-  font-size: 30px;
+  font-size: 1.875rem;
   text-align: right;
   font-weight: 400;
-  padding-right: 10px;
+  padding-right: 0.625rem; 
 }
 
 /* Bottom Bar */
 .bottom-bar {
   width: 100%;
-  height: 80px;
+  height: 5rem; 
   background-color: var(--black);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 1.25rem; 
   position: relative;
   z-index: 2;
 }
 
 .bottom-img {
-  
-  margin:20px;
-  border: 1px solid var(--gainsboro);
-
+  margin: 1.25rem; 
+  border: 0.0625rem solid var(--gainsboro); 
 }
+
 .bottom-img img {
   width: auto;
-  height: 35px;
-  object-fit:cover;
+  height: 2.1875rem; 
+  object-fit: cover;
 }
-/* Number Box - Slightly Pops Out */
+
+/* Number Box */
 .number-box {
   color: var(--gainsboro);
-  border: 1px solid var(--gainsboro);
+  border: 0.0625rem solid var(--gainsboro); 
   position: relative;
   display: flex;
   line-height: 0.65;
   overflow: visible;
   font-family: "NK57";
   font-weight: 400;
-  margin: 20px;
+  margin: 1.25rem; 
 }
 
-/* Make Number Pop Slightly Outside */
 .number-glitch {
-  font-size: 35px;
+  font-size: 2.1875rem; 
   position: relative;
   display: inline-block;
-  transform: translateY(-3px); /* Moves the number slightly outside */
+  transform: translateY(-0.1875rem); 
 }
 
-/* Exit Animation - Top Bar Moves Up, Bottom Bar Moves Down */
+/* Exit Animation */
 .top-bar.exit {
   animation: moveUp 0.8s ease-in-out forwards;
 }
-
 .bottom-bar.exit {
   animation: moveDown 0.8s ease-in-out forwards;
 }
@@ -132,5 +135,33 @@
   }
   to {
     transform: translateY(100%);
+  }
+}
+
+/* Mobile */
+@media (max-width: 48rem) { 
+  .mobile-only {
+    display: block;
+  }
+  .desktop-only {
+    display: none;
+  }
+
+  .top-content {
+    padding: 0 1rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    padding: 1.25rem;
+    font-size: 2rem; 
+    text-align: left;
+  }
+
+  .top-right img {
+    padding: 1.25rem;
+    width: 4rem; 
+    height: auto;
   }
 }

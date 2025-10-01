@@ -72,22 +72,32 @@ const Loading = ({ onComplete }) => {
             }}
           />
 
-          {/* ✅ Top Content */}
+         {/* ✅ Top Content */}
           <div className="top-content">
-            <div className="top-img">
-              <img src="/images/top-arrow.png" alt="design" />
+              {/* Left: Title */}
+              <p className="title">
+                NEERAJ
+                <br />
+                BACHWANI
+              </p>
+
+              {/* Middle: Arrow */}
+              <div className="top-img desktop-only">
+                <img src="/images/top-arrow.png" alt="design" />
+              </div>
+
+              {/* Right: Coming Soon (desktop) */}
+              <div className="top-right desktop-only">
+                COMING
+                <br />
+                SOON.
+              </div>
+
+              {/* Right: Arrow (mobile only) */}
+              <div className="top-right mobile-only">
+                <img src="/images/top-arrow.png" alt="design" />
+              </div>
             </div>
-            <p className="title">
-              NEERAJ
-              <br />
-              BACHWANI
-            </p>
-            <div className="top-right">
-              COMING
-              <br />
-              SOON.
-            </div>
-          </div>
 
           {/* ✅ Bottom Bar */}
           <motion.div
