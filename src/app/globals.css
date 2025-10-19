@@ -27,7 +27,7 @@ html, body {
 }
 
 canvas {
-  position: absolute; /* Ensure it fills the whole viewport */
+  position: absolute; 
   top: 0;
   left: 0;
   width: 100vw;

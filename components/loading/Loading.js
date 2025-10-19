@@ -4,7 +4,8 @@ import { useEffect, useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import "./Loading.css";
-import Butterfly from "./butterfly";
+import Butterfly from "../butterfly";
+import LoadingCursor from "../LoadingCursor";
 
 const Loading = ({ onComplete }) => {
   const [count, setCount] = useState(0);
@@ -30,14 +31,14 @@ const Loading = ({ onComplete }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Trigger fade out after bars animate
+  
   useEffect(() => {
     if (isBarAnimating) {
       setTimeout(() => setIsFadingOut(true), 800);
     }
   }, [isBarAnimating]);
 
-  // Complete callback
+ 
   useEffect(() => {
     if (isFadingOut && onComplete) {
       setTimeout(() => onComplete(), 300);
@@ -54,12 +55,13 @@ const Loading = ({ onComplete }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
-          {/* ✅ 3D Butterfly */}
+          <LoadingCursor />
+         
           <Suspense fallback={null}>
             <Butterfly />
           </Suspense>
 
-          {/* ✅ Top Bar */}
+          
           <motion.div
             className="top-bar"
             initial={{ width: "0%" }}
@@ -72,34 +74,34 @@ const Loading = ({ onComplete }) => {
             }}
           />
 
-         {/* ✅ Top Content */}
+       
           <div className="top-content">
-              {/* Left: Title */}
+              
               <p className="title">
                 NEERAJ
                 <br />
                 BACHWANI
               </p>
 
-              {/* Middle: Arrow */}
+             
               <div className="top-img desktop-only">
                 <img src="/images/top-arrow.png" alt="design" />
               </div>
 
-              {/* Right: Coming Soon (desktop) */}
+             
               <div className="top-right desktop-only">
                 COMING
                 <br />
                 SOON.
               </div>
 
-              {/* Right: Arrow (mobile only) */}
+              
               <div className="top-right mobile-only">
                 <img src="/images/top-arrow.png" alt="design" />
               </div>
             </div>
 
-          {/* ✅ Bottom Bar */}
+          
           <motion.div
             className="bottom-bar"
             initial={{ y: 0 }}

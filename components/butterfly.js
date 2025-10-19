@@ -46,10 +46,9 @@ export default function Butterfly() {
       <directionalLight position={[2, 2, 2]} />
       <ButterflyModel />
 
-      {/* OrbitControls for desktop + mobile */}
       <OrbitControls
-        enableZoom={false} // disable zoom if you only want rotation
-        enablePan={false}  // disable panning if not needed
+        enableZoom={false} 
+        enablePan={false}  
       />
     </Canvas>
   );
