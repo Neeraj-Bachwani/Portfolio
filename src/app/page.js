@@ -2,7 +2,7 @@
 
 import Loading from '@/components/loading/Loading';
 import IntroGate from '@/components/IntroGate';
-import ScratchTextNEERAJ from '@/components/ScratchTextNEERAJ';
+import ScratchUnderConstruction from '@/components/ScratchUnderConstruction';
 // import Navbar from '@/components/navbar';
 // import CompassNav from '@/components/compassNav';
 // import HeroModel from '@/components/heroModel';
@@ -23,7 +23,7 @@ export default function Home() {
   ) : (
     <>
       {<div>
-        <ScratchTextNEERAJ brushWidth={8} />
+        <ScratchUnderConstruction />
         {/* <Navbar />
         <CompassNav />  */}
       </div>}
