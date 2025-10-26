@@ -133,14 +133,15 @@ export default function IntroGate({ onEnter }) {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Key to enter
+  // Only allow "Enter" when the displayed progress reaches 100
+  const isReady = Math.round(Math.max(1, Math.min(100, visProgress))) >= 100;
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Enter") onEnter?.();
+      if (e.key === "Enter" && isReady) onEnter?.();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onEnter]);
+  }, [onEnter, isReady]);
 
   // Compute geometry for the top bar
   const width = mounted ? (topBarRef.current?.clientWidth || (typeof window !== "undefined" ? window.innerWidth : 0)) : 0;
@@ -199,23 +200,37 @@ export default function IntroGate({ onEnter }) {
         </div>
 
         <button
-          onMouseEnter={() => setHoveringEnter(true)}
+          onMouseEnter={() => isReady && setHoveringEnter(true)}
           onMouseLeave={() => setHoveringEnter(false)}
-          onClick={() => onEnter?.()}
+          onClick={() => { if (isReady) onEnter?.(); }}
           type="button"
           className="group tracking-widest"
-          style={{ color: "#ffffff", fontSize: "clamp(16px, 2.2vw, 28px)", background: "transparent", border: "none", outline: "none", appearance: "none" }}
+          disabled={!isReady}
+          style={{
+            color: isReady ? "#ffffff" : "#777777",
+            fontSize: "clamp(16px, 2.2vw, 28px)",
+            background: "transparent",
+            border: "none",
+            outline: "none",
+            appearance: "none",
+            cursor: isReady ? (pointerFine ? "none" : "pointer") : "default",
+            // Hide until ready, then ease-in from below
+            opacity: isReady ? 1 : 0,
+            transform: isReady ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 220ms ease-out, transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+            pointerEvents: isReady ? "auto" : "none",
+          }}
         >
           <span
             className="transition-transform"
-            style={{ color: hoveringEnter ? "#b6a9c7" : "#ffffff", transform: hoveringEnter ? "translateX(-10px)" : "translateX(0)", display: "inline-block", textShadow: "0 0 8px rgba(182,169,199,0.45)" }}
+            style={{ color: hoveringEnter && isReady ? "#b6a9c7" : (isReady ? "#ffffff" : "#777777"), transform: hoveringEnter && isReady ? "translateX(-10px)" : "translateX(0)", display: "inline-block", textShadow: isReady ? "0 0 8px rgba(182,169,199,0.45)" : "none" }}
           >
             [
           </span>
           <span style={{ marginLeft: 12, marginRight: 12 }}>ENTER</span>
           <span
             className="transition-transform"
-            style={{ color: hoveringEnter ? "#b6a9c7" : "#ffffff", transform: hoveringEnter ? "translateX(10px)" : "translateX(0)", display: "inline-block", textShadow: "0 0 8px rgba(182,169,199,0.45)" }}
+            style={{ color: hoveringEnter && isReady ? "#b6a9c7" : (isReady ? "#ffffff" : "#777777"), transform: hoveringEnter && isReady ? "translateX(10px)" : "translateX(0)", display: "inline-block", textShadow: isReady ? "0 0 8px rgba(182,169,199,0.45)" : "none" }}
           >
             ]
           </span>
