@@ -46,7 +46,6 @@ export default function IntroGate({ onEnter }) {
 
     // Slower, stepped reveal with sticky scramble
     const start = performance.now();
-    const totalDuration = 6500; // slower overall
     let lastRevealAt = start;
     let revealed = 0;
 
@@ -54,59 +53,59 @@ export default function IntroGate({ onEnter }) {
       const now = performance.now();
       const elapsed = now - start;
 
-      // Reveal next char every 140..220ms
+      // Reveal next char at a steady, slightly-fast pace (90..120ms)
       const deltaReveal = now - lastRevealAt;
-      const interval = 140 + Math.random() * 80;
+      const interval = 90 + Math.random() * 30;
       if (deltaReveal > interval && revealed < activeText.length) {
         revealed += 1;
         lastRevealAt = now;
         setReveal(revealed);
       }
 
-      // Sticky scramble: update unrevealed chars ~every 80ms with 35% change chance
-      if (now - lastScrambleAtRef.current > 80) {
+      // Sticky scramble: update unrevealed chars ~every 60ms with ~45% change chance
+      if (now - lastScrambleAtRef.current > 60) {
         lastScrambleAtRef.current = now;
         setScramble((prev) =>
           Array.from({ length: activeText.length }, (_, i) => {
             if (i < revealed || activeText[i] === " ") return activeText[i];
             const keep = prev?.[i];
             const rnd = Math.random();
-            if (keep && rnd > 0.35) return keep; // stay sticky most frames
+            if (keep && rnd > 0.45) return keep; // stay sticky most frames
             return SIGNS[Math.floor(Math.random() * SIGNS.length)];
           })
         );
       }
 
-      // Progress 1..100 with easing toward the end
-      const p = Math.min(1, elapsed / totalDuration);
-      const eased = 1 - Math.pow(1 - p, 2);
-      const pct = Math.max(1, Math.min(100, Math.floor(eased * 100)));
+      // Progress ties directly to reveal percent so bar finishes with text
+      const pct = Math.max(1, Math.min(100, Math.floor((revealed / Math.max(1, activeText.length)) * 100)));
       setProgress(pct);
 
-      // Sticky visual progress that eases toward target
-      {
+      // Sticky visual progress that eases toward target, but snap to 100 when done
+      if (revealed >= activeText.length) {
+        visRef.current = 100;
+        setVisProgress(100);
+      } else {
         const current = visRef.current || 1;
         const delta = pct - current;
-        const fracToNearest = Math.abs(current - Math.round(current));
-        const speed = 0.035 * (0.35 + fracToNearest); // slower and sticky near integers
+        const speed = 0.25; // constant follow speed for steady motion
         const next = current + delta * speed;
         visRef.current = next;
         setVisProgress(next);
       }
 
-      // Start retract once we hit 100
-      if (pct === 100 && retractStartRef.current == null) {
+      // Start retract once all characters are revealed
+      if (revealed >= activeText.length && retractStartRef.current == null) {
         retractStartRef.current = now;
       }
       if (retractStartRef.current != null) {
         const rElapsed = now - retractStartRef.current;
-        const rDur = 900;
+        const rDur = 700;
         const r = Math.min(1, rElapsed / rDur);
         const easedR = 1 - Math.pow(1 - r, 3); // ease-out
         setRetractT(easedR);
       }
 
-      if (revealed < activeText.length || p < 1 || (retractStartRef.current != null && retractT < 1)) {
+      if (revealed < activeText.length || (retractStartRef.current != null && retractT < 1)) {
         rafRef.current = requestAnimationFrame(tick);
       }
     };

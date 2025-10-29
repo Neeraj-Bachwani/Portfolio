@@ -1,34 +1,20 @@
 "use client";
 
-import Loading from '@/components/loading/Loading';
-import IntroGate from '@/components/IntroGate';
-import ScratchUnderConstruction from '@/components/ScratchUnderConstruction';
-// import Navbar from '@/components/navbar';
-// import CompassNav from '@/components/compassNav';
-// import HeroModel from '@/components/heroModel';
-// import CustomCursor from '@/components/customCursor';
 import { useState } from 'react';
-import './page.css';
+import Loading from '@/components/loading/Loading';
+import MainPage from '@/components/MainPage';
+import '@/src/app/page.css';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [introDone, setIntroDone] = useState(false);
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden" style={{ background: "#ffffff" }}>
-  {loading ? (
-    <Loading onComplete={() => setLoading(false)} />
-  ) : !introDone ? (
-    <IntroGate onEnter={() => setIntroDone(true)} />
-  ) : (
-    <>
-      {<div>
-        <ScratchUnderConstruction />
-        {/* <Navbar />
-        <CompassNav />  */}
-      </div>}
-    </>
-  )}
-</div>
+    <div className="relative min-h-screen w-screen overflow-hidden">
+      {loading ? (
+        <Loading onComplete={() => setLoading(false)} />
+      ) : (
+        <MainPage />
+      )}
+    </div>
   );
 }

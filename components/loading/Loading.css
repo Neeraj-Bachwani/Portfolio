@@ -69,7 +69,7 @@
     padding-right: .625rem
 }
 
-.bottom-bar {
+.loading-container .bottom-bar {
     width: 100%;
     height: 5rem;
     background-color: var(--black);
@@ -115,7 +115,7 @@
     animation: moveUp .8s ease-in-out forwards
 }
 
-.bottom-bar.exit {
+.loading-container .bottom-bar.exit {
     animation: moveDown .8s ease-in-out forwards
 }
 

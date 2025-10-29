@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function LoadingCursor() {
+export default function LoadingCursor({ colorDark = "#ffffff", colorLight = "#1a1b1d" }) {
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const canvasRef = useRef(null);
   const pointsRef = useRef([]); // trailing polyline (oldest -> newest)
@@ -81,6 +81,8 @@ export default function LoadingCursor() {
     window.addEventListener("resize", resize);
 
     const animate = () => {
+      const isLight = document.body.classList.contains("theme-light");
+      const stroke = isLight ? colorLight : colorDark;
       const w = canvas.width / dpr; const h = canvas.height / dpr;
       ctx.clearRect(0, 0, w, h);
 
@@ -117,7 +119,7 @@ export default function LoadingCursor() {
 
       // Draw polyline with slight angular wiggle on intermediate points
       if (pointsRef.current.length > 1) {
-        ctx.strokeStyle = "#ffffff";
+        ctx.strokeStyle = stroke;
         ctx.lineWidth = 8;
         ctx.lineJoin = "miter";
         ctx.lineCap = "round";
@@ -159,7 +161,7 @@ export default function LoadingCursor() {
           width: 12,
           height: 12,
           borderRadius: "50%",
-          background: "#ffffff",
+          background: document.body && document.body.classList.contains('theme-light') ? colorLight : colorDark,
           pointerEvents: "none",
           zIndex: 99999,
         }}
@@ -173,7 +175,7 @@ export default function LoadingCursor() {
           width: 24,
           height: 24,
           borderRadius: "50%",
-          background: "rgba(255,255,255,0.18)",
+          background: document.body && document.body.classList.contains('theme-light') ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.18)",
           pointerEvents: "none",
           zIndex: 99998,
         }}

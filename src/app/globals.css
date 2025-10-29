@@ -18,8 +18,20 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html, body { scroll-behavior: auto; }
+}
+
+/* Hide native scrollbars across browsers */
+html, body { scrollbar-width: none; }
+body::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
+body::-webkit-scrollbar-thumb { background: transparent; }
+body { -ms-overflow-style: none; }
 
 #root, #__next {
   width: 100%;
@@ -54,6 +66,7 @@ body {
   background-color: var(--black);
   color: var(--gainsboro);
 }
+/* Default browser scrollbar (no custom styling) */
 
 /* Test Colors */
 .test-colors {
