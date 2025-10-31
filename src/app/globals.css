@@ -21,6 +21,7 @@ html, body {
   overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
 @media (prefers-reduced-motion: reduce) {

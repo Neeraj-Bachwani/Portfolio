@@ -8,6 +8,7 @@ export default function ScrambleText({
   text = "NEERAJ. BACHWANI",
   className = "",
   duration = 2800,
+  autoStartKey,
 }) {
   const [display, setDisplay] = useState(text);
   const [isScrambling, setIsScrambling] = useState(false);
@@ -101,6 +102,11 @@ export default function ScrambleText({
   };
 
   useEffect(() => () => rafRef.current && cancelAnimationFrame(rafRef.current), []);
+  useEffect(() => { if (autoStartKey !== undefined) { // re-trigger when key changes
+    // small timeout to allow layout
+    const t = setTimeout(() => start(), 0);
+    return () => clearTimeout(t);
+  } }, [autoStartKey]);
 
   return (
     <span className={className} onMouseEnter={start}>
@@ -108,3 +114,5 @@ export default function ScrambleText({
     </span>
   );
 }
+
+ScrambleText.defaultProps = { autoStartKey: undefined };

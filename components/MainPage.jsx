@@ -6,13 +6,15 @@ import FloatingWords from "./FloatingWords";
 import TechTicker from "./TechTicker";
 import ScrollIndicator from "./ScrollIndicator";
 import ScratchWorks from "./ScratchWorks";
-import WorksGallery from "./WorksGallery";
+import WorksScreen from "./WorksScreen";
 import { useEffect, useRef, useState } from "react";
+import { m } from "framer-motion";
 
 export default function MainPage() {
   const worksRef = useRef(null);
   const [inLight, setInLight] = useState(false);
   const [inWorksPointer, setInWorksPointer] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const node = worksRef.current;
@@ -21,13 +23,14 @@ export default function MainPage() {
       const e = entries[0];
       const visible = e && e.isIntersecting;
       setInLight(!!visible);
-      document.body.classList.toggle("theme-light", !!visible);
+      document.body.classList.toggle("theme-works", !!visible);
     }, { threshold: 0.25 });
     io.observe(node);
-    return () => { io.disconnect(); document.body.classList.remove("theme-light"); };
+    return () => { io.disconnect(); document.body.classList.remove("theme-works"); };
   }, []);
 
   const scrollTo = (id) => {
+    setMenuOpen(false);
     const el = document.getElementById(id);
     if (!el) return;
     const startY = window.scrollY || document.documentElement.scrollTop || 0;
@@ -78,11 +81,28 @@ export default function MainPage() {
       <div className="noise-overlay" />
 
       {/* top-right nav */}
+      {/* Desktop nav */}
       <nav className="top-right-nav">
         <button className="nav-link" onClick={() => scrollTo("about")}>ABOUT</button>
         <button className="nav-link" onClick={() => scrollTo("works")}>WORKS</button>
         <span className="nav-link">CONTACT</span>
       </nav>
+
+      {/* Mobile hamburger */}
+      <button
+        aria-label="Open menu"
+        className={`hamburger-btn ${menuOpen ? "active" : ""}`}
+        onClick={() => setMenuOpen((v) => !v)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`} role="menu">
+        <button className="mobile-item" onClick={() => scrollTo("about")}>ABOUT</button>
+        <button className="mobile-item" onClick={() => scrollTo("works")}>WORKS</button>
+        <button className="mobile-item">CONTACT</button>
+      </div>
 
       {/* left hero name with hover scramble */}
       <div className="hero-wrap">
@@ -92,7 +112,7 @@ export default function MainPage() {
         {/* Subtext block under name */}
         <div className="subtext">
           <div className="jp">{"\u3044 \u3089 \u3063 \u3057 \u3083 \u3044 \u307e \u305b"}</div>
-          <div className="decor-line">/ / / / / / / / / / / / /</div>
+          <div className="decor-line">/ / / / / / / / / / / </div>
           <div className="tagline-full">WELCOME TO MY  //  PORTFOLIO.</div>
         </div>
       </div>
@@ -139,7 +159,69 @@ I MAKE IT HAPPEN`}
       <div className="works-info">
         A COLLECTION OF THINGS I'VE BUILT, LEARNED FROM, AND POURED CREATIVITY INTO. EACH ONE TELLS A SMALL PART OF MY JOURNEY.
       </div>
-      <WorksGallery />
+      {/* two-scroll spacer before snap-to full screen */}
+      <div id="wsnap" className="wg-snap-spacer" aria-hidden />
+      <WorksScreen items={[
+        {
+          title: "VENTURERS",
+          dir: "right",
+          cover: "/images/ven.jpg",
+          type: "mobile",
+          screens: ["/images/ven1.png","/images/ven2.png","/images/ven3.png","/images/ven4.png","/images/ven5.png"],
+          desc: "A comprehensive employee management app that centralizes daily operations - including job assignments, attendance tracking, worksite management, and emergency information, all within a simple and secure mobile interface.",
+          stack: "React Native | Expo | SQLite | Flask | Python | REST API | SQLAlchemy | Node.js | NGINX",
+          mdesc: "An employee management app for job assignments, attendance, worksites, and emergency info.",
+        },
+        {
+          title: "NIGHT CITY",
+          dir: "right",
+          cover: "/images/cp.jpg",
+          type: "desktop",
+          screens: [
+            "/images/cp1.png",
+            "/images/cp2.png",
+            "/images/cp3.png",
+            "/images/cp4.png",
+            "/images/cp5.png",
+            "/images/cp6.png"
+          ],
+          desc: "A cyberpunk-inspired desktop dashboard featuring mini games, a built-in music player, live weather and location data, and interactive animations — designed with a sleek futuristic interface optimized for performance and SEO.",
+          stack: "React | Tailwind CSS | JavaScript | Weather API | Geolocation API | SEO Optimization",
+          mdesc: "A desktop dashboard with mini games, music player, live weather, and interactive animations.",
+        },
+        
+         {
+          title: "BRICK DEV",
+          dir: "left",
+          cover: "/images/bd.jpg",
+          type: "desktop",
+          screens: ["/images/bd1.png", "/images/bd2.png", "/images/bd3.png", "/images/bd4.png", "/images/bd5.png", "/images/bd6.png", "/images/bd7.png"],
+          desc: "A real estate management platform for realtors to list and sell properties, hire contract workers, and oversee finances from a unified dashboard. Buyers can explore listings and use built-in mortgage calculators to plan their purchases.",
+          stack: "Next.js | React | JavaScript | CSS | Supabase | PostgreSQL",
+          mdesc: "A real estate management platform for listing and selling properties.",
+        },
+        {
+          title: "RINDER",
+          dir: "right",
+          cover: "/images/rin.jpg",
+          type: "desktop",
+          screens: ["/images/rin1.png", "/images/rin2.png", "/images/rin3.png", "/images/rin4.png", "/images/rin5.png", "/images/rin6.png", "/images/rin7.png", "/images/rin8.png"],
+          desc: "A mobile app for renters to find roommates, chat with them, and explore shared housing options. Users can post property listings, connect with others, and form groups to search for rental places together.",
+          stack: "CSS | Framer Motion | Figma | UI/UX Design",
+          mdesc: "A mobile app for renters to find roommates and explore shared housing options.",
+        },
+         {
+          title: "HIDDEN GEMS",
+          dir: "left",
+          cover: "/images/hg.jpg",
+          type: "desktop",
+          screens: ["/images/hg1.png", "/images/hg2.png", "/images/hg3.png", "/images/hg4.png", "/images/hg5.png"],
+          desc: "A mobile app that allows users to share their favorite locations and explore them on an interactive map. Built with real-time updates and secure data handling to help users discover and bookmark hidden spots within their city.",
+          stack: "Expo | React Native | TypeScript | Supabase | Map API",
+          mdesc: "A mobile app for sharing favorite locations and exploring them on an interactive map.",
+        },
+       
+      ]} />
     </section>
     </>
   );

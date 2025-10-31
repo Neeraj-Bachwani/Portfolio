@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function LoadingCursor({ colorDark = "#ffffff", colorLight = "#1a1b1d" }) {
+  // Hooks must always be called in the same order
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const canvasRef = useRef(null);
   const pointsRef = useRef([]); // trailing polyline (oldest -> newest)
@@ -10,7 +11,26 @@ export default function LoadingCursor({ colorDark = "#ffffff", colorLight = "#1a
   const lastMoveTimeRef = useRef(performance.now());
   const lastAngleRef = useRef(null);
   const speedRef = useRef(0);
+  const [enabled, setEnabled] = useState(false);
+
+  // Decide once per mount if cursor should be enabled (no touch/coarse)
   useEffect(() => {
+    try {
+      const isTouch =
+        typeof window !== "undefined" && (
+          (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+          ("ontouchstart" in window) ||
+          ((navigator && (navigator.maxTouchPoints || 0)) > 0)
+        );
+      setEnabled(!isTouch);
+    } catch {
+      setEnabled(true);
+    }
+  }, []);
+
+  // Input listeners only when enabled
+  useEffect(() => {
+    if (!enabled) return;
     const onMove = (e) => {
       const x = e.clientX; const y = e.clientY;
       const now = performance.now();
@@ -58,10 +78,11 @@ export default function LoadingCursor({ colorDark = "#ffffff", colorLight = "#1a
       window.removeEventListener("mouseleave", onLeave);
       window.removeEventListener("mouseenter", onMove);
     };
-  }, []);
+  }, [enabled]);
 
   // Jagged polyline trail drawing (sharp segments, retracts when stationary)
   useEffect(() => {
+    if (!enabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -147,7 +168,9 @@ export default function LoadingCursor({ colorDark = "#ffffff", colorLight = "#1a
     };
     const id = requestAnimationFrame(animate);
     return () => { cancelAnimationFrame(id); window.removeEventListener("resize", resize); };
-  }, [pos.x, pos.y]);
+  }, [pos.x, pos.y, enabled]);
+
+  if (!enabled) return null;
 
   return (
     <>

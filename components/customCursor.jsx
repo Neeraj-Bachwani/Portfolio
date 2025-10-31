@@ -6,8 +6,24 @@ import { motion } from 'framer-motion';
 export default function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    try {
+      const isTouch =
+        typeof window !== 'undefined' && (
+          window.matchMedia && window.matchMedia('(pointer: coarse)').matches ||
+          'ontouchstart' in window ||
+          (navigator && (navigator.maxTouchPoints || 0) > 0)
+        );
+      if (!isTouch) setEnabled(true);
+    } catch {
+      setEnabled(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     // Hide default cursor
     document.body.style.cursor = 'none';
 
@@ -29,9 +45,9 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [isVisible]);
+  }, [isVisible, enabled]);
 
-  if (!isVisible) return null;
+  if (!enabled || !isVisible) return null;
 
   return (
     <>

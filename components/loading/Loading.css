@@ -165,4 +165,7 @@
         width: 4rem;
         height: auto
     }
+
+    /* Show system cursor on mobile during loading */
+    .loading-container { cursor: auto; }
 }

@@ -18,6 +18,7 @@ export default function ScratchWorks({ text = "WORKS", brushWidth = 4 }) {
   const speedRef = useRef(0);
   const lastAngleRef = useRef(null);
   const trailCtxRef = useRef(null);
+  const drawingRef = useRef(false); // touch drawing state
 
   const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
   const [pointerFine, setPointerFine] = useState(false);
@@ -60,8 +61,10 @@ export default function ScratchWorks({ text = "WORKS", brushWidth = 4 }) {
       }
 
       const mctx = maskRef.current.getContext("2d");
-      const padX = width * 0.08;
-      const padY = height * 0.2;
+      const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const isSmall = Math.min(window.innerWidth, window.innerHeight) <= 820;
+      const padX = width * (isCoarse || isSmall ? 0.10 : 0.08); // extra side padding on mobile
+      const padY = height * (isCoarse || isSmall ? 0.12 : 0.2);
 
       const fitFont = (base = 120) => {
         mctx.save();
@@ -78,12 +81,14 @@ export default function ScratchWorks({ text = "WORKS", brushWidth = 4 }) {
         return Math.floor(size);
       };
 
-      const fontSize = fitFont();
+      let fontSize = fitFont();
+      if (isCoarse || isSmall) fontSize = Math.floor(fontSize * 1.18); // make WORKS bigger on mobile
       mctx.font = `900 ${fontSize}px NK57, system-ui, sans-serif`;
       mctx.textAlign = "center";
       mctx.textBaseline = "middle";
       mctx.fillStyle = "#ffffff"; // mask fill
-      mctx.fillText(text, width / 2, height / 2);
+      const yCenter = (isCoarse || isSmall) ? height * 0.72 : height / 2; // push lower on mobile
+      mctx.fillText(text, width / 2, yCenter);
 
       // Seed subtle pre-scratch lines in purple
       const styles = getComputedStyle(document.documentElement);
@@ -249,45 +254,56 @@ export default function ScratchWorks({ text = "WORKS", brushWidth = 4 }) {
       paintAt(x, y);
     };
     const onLeave = () => { lastPosRef.current = null; setCursorPos({ x: -100, y: -100 }); };
-    const onTouch = (e) => {
+    const onTouchStart = (e) => {
       if (!e.touches || e.touches.length === 0) return;
+      drawingRef.current = true;
       const t = e.touches[0];
-      const rect = container.getBoundingClientRect();
-      const x = t.clientX - rect.left;
-      const y = t.clientY - rect.top;
       onMove({ clientX: t.clientX, clientY: t.clientY });
-      e.preventDefault();
     };
+    const onTouchMove = (e) => {
+      if (!e.touches || e.touches.length === 0) return;
+      if (drawingRef.current) {
+        const t = e.touches[0];
+        onMove({ clientX: t.clientX, clientY: t.clientY });
+        e.preventDefault(); // while drawing, keep the gesture in-canvas
+      }
+    };
+    const onTouchEnd = () => { drawingRef.current = false; onLeave(); };
 
     container.addEventListener("mousemove", onMove);
     container.addEventListener("mouseenter", onMove);
     container.addEventListener("mouseleave", onLeave);
-    container.addEventListener("touchstart", onTouch, { passive: false });
-    container.addEventListener("touchmove", onTouch, { passive: false });
-    container.addEventListener("touchend", onLeave);
+    // Touch: draw only when finger is down; otherwise allow scroll
+    container.addEventListener("touchstart", onTouchStart, { passive: false });
+    container.addEventListener("touchmove", onTouchMove, { passive: false });
+    container.addEventListener("touchend", onTouchEnd);
 
     return () => {
       window.removeEventListener("resize", resize);
       container.removeEventListener("mousemove", onMove);
       container.removeEventListener("mouseenter", onMove);
       container.removeEventListener("mouseleave", onLeave);
-      container.removeEventListener("touchstart", onTouch);
-      container.removeEventListener("touchmove", onTouch);
-      container.removeEventListener("touchend", onLeave);
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
       // no global body style changes
     };
   }, [text, brushWidth]);
 
   return (
-    <div ref={containerRef} className="relative" style={{ background: "#ffffff", width: "100vw", height: "70dvh" }}>
+    <div
+      ref={containerRef}
+      className="relative scratch-works-container"
+      style={{ background: "#ffffff", width: "100vw" }}
+    >
       <canvas ref={displayCanvasRef} className="absolute inset-0 pointer-events-none" />
       {enableLocalTrail && (
         <canvas ref={trailCanvasRef} className="absolute inset-0 pointer-events-none" />
       )}
 
       {/* Instructional overlay */}
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", paddingTop: "calc(env(safe-area-inset-top, 0px) + 16px)", paddingLeft: "clamp(12px, 4vw, 40px)", pointerEvents: "none" }}>
-        <div style={{ color: "#000000", fontFamily: "Roobert, system-ui, sans-serif", letterSpacing: 2.8, fontSize: 18, fontWeight: 650 }}>SCRATCH AROUND</div>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)", paddingLeft: "clamp(14px, 5vw, 40px)", pointerEvents: "none" }}>
+        <div style={{ color: "#000000", fontFamily: "Roobert, system-ui, sans-serif", letterSpacing: 2.2, fontSize: "clamp(12px, 2.8vw, 16px)", fontWeight: 600 }}>SCRATCH AROUND</div>
       </div>
 
       {/* Removed (05) label per request */}
